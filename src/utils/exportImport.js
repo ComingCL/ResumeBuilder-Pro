@@ -154,24 +154,30 @@ export class ResumeExportImport {
    */
   static validateResumeData(data) {
     try {
+      // 检查是否是导出的完整数据格式
+      let resumeData = data
+      if (data.resumeData) {
+        resumeData = data.resumeData
+      }
+
       // 检查必要的字段结构
       const requiredFields = ['personalInfo', 'workExperience', 'education', 'skills', 'projects']
 
       for (const field of requiredFields) {
-        if (!(field in data)) {
+        if (!(field in resumeData)) {
           return false
         }
       }
 
       // 检查personalInfo的基本结构
-      if (typeof data.personalInfo !== 'object') {
+      if (typeof resumeData.personalInfo !== 'object') {
         return false
       }
 
       // 检查数组字段
       const arrayFields = ['workExperience', 'education', 'skills', 'projects']
       for (const field of arrayFields) {
-        if (!Array.isArray(data[field])) {
+        if (!Array.isArray(resumeData[field])) {
           return false
         }
       }

@@ -124,6 +124,66 @@
               </div>
             </div>
 
+            <!-- 教育经历部分 -->
+            <div class="mb-8">
+              <div class="flex items-center justify-between mb-4">
+                <h3
+                  class="text-lg font-semibold text-gray-800 pb-2 border-b border-gray-200 flex-1"
+                >
+                  <el-icon class="mr-2"><School /></el-icon>
+                  教育经历
+                </h3>
+                <el-button type="primary" size="small" @click="addEducation">
+                  <el-icon><Plus /></el-icon>
+                  添加
+                </el-button>
+              </div>
+              <div class="space-y-4" v-if="resumeData.education.length > 0">
+                <div
+                  v-for="(edu, index) in resumeData.education"
+                  :key="edu.id"
+                  class="p-4 border border-gray-200 rounded-lg bg-gray-50"
+                >
+                  <div class="flex justify-between items-start mb-3">
+                    <span class="text-sm font-medium text-gray-700">教育经历 {{ index + 1 }}</span>
+                    <el-button type="danger" size="small" text @click="removeEducation(edu.id)">
+                      <el-icon><Delete /></el-icon>
+                    </el-button>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3 mb-3">
+                    <el-input v-model="edu.school" placeholder="学校名称" size="small" />
+                    <el-input v-model="edu.degree" placeholder="学历" size="small" />
+                  </div>
+                  <div class="grid grid-cols-2 gap-3 mb-3">
+                    <el-input v-model="edu.major" placeholder="专业" size="small" />
+                    <el-input v-model="edu.gpa" placeholder="GPA (可选)" size="small" />
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <el-date-picker
+                      v-model="edu.startDate"
+                      type="month"
+                      placeholder="开始时间"
+                      size="small"
+                      format="YYYY年MM月"
+                      value-format="YYYY-MM"
+                    />
+                    <el-date-picker
+                      v-model="edu.endDate"
+                      type="month"
+                      placeholder="结束时间"
+                      size="small"
+                      format="YYYY年MM月"
+                      value-format="YYYY-MM"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-center py-8 text-gray-500">
+                <el-icon class="text-2xl mb-2"><School /></el-icon>
+                <p>暂无教育经历，点击添加按钮开始</p>
+              </div>
+            </div>
+
             <!-- 工作经验部分 -->
             <div class="mb-8">
               <div class="flex items-center justify-between mb-4">
@@ -160,8 +220,22 @@
                     <el-input v-model="exp.position" placeholder="职位名称" size="small" />
                   </div>
                   <div class="grid grid-cols-2 gap-3 mb-3">
-                    <el-input v-model="exp.startDate" placeholder="开始时间" size="small" />
-                    <el-input v-model="exp.endDate" placeholder="结束时间" size="small" />
+                    <el-date-picker
+                      v-model="exp.startDate"
+                      type="month"
+                      placeholder="开始时间"
+                      size="small"
+                      format="YYYY年MM月"
+                      value-format="YYYY-MM"
+                    />
+                    <el-date-picker
+                      v-model="exp.endDate"
+                      type="month"
+                      placeholder="结束时间"
+                      size="small"
+                      format="YYYY年MM月"
+                      value-format="YYYY-MM"
+                    />
                   </div>
                   <el-input
                     type="textarea"
@@ -178,51 +252,7 @@
               </div>
             </div>
 
-            <!-- 教育经历部分 -->
-            <div class="mb-8">
-              <div class="flex items-center justify-between mb-4">
-                <h3
-                  class="text-lg font-semibold text-gray-800 pb-2 border-b border-gray-200 flex-1"
-                >
-                  <el-icon class="mr-2"><School /></el-icon>
-                  教育经历
-                </h3>
-                <el-button type="primary" size="small" @click="addEducation">
-                  <el-icon><Plus /></el-icon>
-                  添加
-                </el-button>
-              </div>
-              <div class="space-y-4" v-if="resumeData.education.length > 0">
-                <div
-                  v-for="(edu, index) in resumeData.education"
-                  :key="edu.id"
-                  class="p-4 border border-gray-200 rounded-lg bg-gray-50"
-                >
-                  <div class="flex justify-between items-start mb-3">
-                    <span class="text-sm font-medium text-gray-700">教育经历 {{ index + 1 }}</span>
-                    <el-button type="danger" size="small" text @click="removeEducation(edu.id)">
-                      <el-icon><Delete /></el-icon>
-                    </el-button>
-                  </div>
-                  <div class="grid grid-cols-2 gap-3 mb-3">
-                    <el-input v-model="edu.school" placeholder="学校名称" size="small" />
-                    <el-input v-model="edu.degree" placeholder="学历" size="small" />
-                  </div>
-                  <div class="grid grid-cols-2 gap-3 mb-3">
-                    <el-input v-model="edu.major" placeholder="专业" size="small" />
-                    <el-input v-model="edu.gpa" placeholder="GPA (可选)" size="small" />
-                  </div>
-                  <div class="grid grid-cols-2 gap-3">
-                    <el-input v-model="edu.startDate" placeholder="开始时间" size="small" />
-                    <el-input v-model="edu.endDate" placeholder="结束时间" size="small" />
-                  </div>
-                </div>
-              </div>
-              <div v-else class="text-center py-8 text-gray-500">
-                <el-icon class="text-2xl mb-2"><School /></el-icon>
-                <p>暂无教育经历，点击添加按钮开始</p>
-              </div>
-            </div>
+            
 
             <!-- 技能专长部分 -->
             <div class="mb-8">
@@ -284,7 +314,12 @@
                 >
                   <div class="flex justify-between items-start mb-3">
                     <span class="text-sm font-medium text-gray-700">项目经历 {{ index + 1 }}</span>
-                    <el-button type="danger" size="small" text @click="removeProject(project.id)">
+                    <el-button
+                      type="danger"
+                      size="small"
+                      text
+                      @click="removeProject(project.id)"
+                    >
                       <el-icon><Delete /></el-icon>
                     </el-button>
                   </div>
@@ -293,20 +328,33 @@
                     <el-input v-model="project.role" placeholder="担任角色" size="small" />
                   </div>
                   <div class="grid grid-cols-2 gap-3 mb-3">
-                    <el-input v-model="project.startDate" placeholder="开始时间" size="small" />
-                    <el-input v-model="project.endDate" placeholder="结束时间" size="small" />
-                  </div>
-                  <div class="mb-3">
-                    <el-input
-                      v-model="project.technologies"
-                      placeholder="使用技术 (用逗号分隔)"
+                    <el-date-picker
+                      v-model="project.startDate"
+                      type="month"
+                      placeholder="开始时间"
                       size="small"
+                      format="YYYY年MM月"
+                      value-format="YYYY-MM"
+                    />
+                    <el-date-picker
+                      v-model="project.endDate"
+                      type="month"
+                      placeholder="结束时间"
+                      size="small"
+                      format="YYYY年MM月"
+                      value-format="YYYY-MM"
                     />
                   </div>
                   <el-input
+                    v-model="project.technologies"
+                    placeholder="技术栈（如：Vue.js, Node.js, MySQL）"
+                    size="small"
+                    class="mb-3"
+                  />
+                  <el-input
                     type="textarea"
                     v-model="project.description"
-                    placeholder="项目描述和主要贡献"
+                    placeholder="项目描述和主要成就"
                     :rows="3"
                     size="small"
                   />
@@ -345,11 +393,11 @@
               >
                 <!-- 简历头部 -->
                 <div class="resume-header text-center mb-6 pb-4 border-b-2 border-blue-600">
-                  <h1 class="text-2xl font-bold text-gray-900 mb-2">
-                    {{ resumeData.personalInfo.name || '陈郭娘' }}
+                  <h1 v-if="resumeData.personalInfo.name" class="text-2xl font-bold text-gray-900 mb-2">
+                    {{ resumeData.personalInfo.name }}
                   </h1>
-                  <p class="text-lg text-blue-600 font-medium mb-3">
-                    {{ resumeData.personalInfo.title || '前端开发工程师' }}
+                  <p v-if="resumeData.personalInfo.title" class="text-lg text-blue-600 font-medium mb-3">
+                    {{ resumeData.personalInfo.title }}
                   </p>
                   <div class="contact-info text-sm text-gray-600 space-y-1">
                     <div class="flex justify-center items-center gap-6 flex-wrap">
@@ -377,73 +425,116 @@
                 <!-- 个人简介 -->
                 <div v-if="resumeData.personalInfo.summary" class="mb-6">
                   <h3
-                    class="text-lg font-semibold text-gray-800 mb-3 pb-1 border-b border-gray-300"
+                    class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
                     个人简介
                   </h3>
-                  <p class="text-gray-700 leading-relaxed">
+                  <p class="text-gray-700 leading-relaxed text-sm">
                     {{ resumeData.personalInfo.summary }}
                   </p>
-                </div>
-
-                <!-- 工作经验 -->
-                <div v-if="resumeData.workExperience.length > 0" class="mb-6">
-                  <h3
-                    class="text-lg font-semibold text-gray-800 mb-3 pb-1 border-b border-gray-300"
-                  >
-                    工作经验
-                  </h3>
-                  <div class="space-y-4">
-                    <div
-                      v-for="exp in resumeData.workExperience"
-                      :key="exp.id"
-                      class="border-l-3 border-blue-500 pl-4"
-                    >
-                      <div class="flex justify-between items-start mb-2">
-                        <div>
-                          <h4 class="font-semibold text-gray-900">
-                            {{ exp.position || '职位名称' }}
-                          </h4>
-                          <p class="text-blue-600 font-medium">{{ exp.company || '公司名称' }}</p>
-                        </div>
-                        <span class="text-sm text-gray-500">
-                          {{ exp.startDate || '开始时间' }} - {{ exp.endDate || '结束时间' }}
-                        </span>
-                      </div>
-                      <p v-if="exp.description" class="text-gray-700 text-sm leading-relaxed">
-                        {{ exp.description }}
-                      </p>
-                    </div>
-                  </div>
                 </div>
 
                 <!-- 教育经历 -->
                 <div v-if="resumeData.education.length > 0" class="mb-6">
                   <h3
-                    class="text-lg font-semibold text-gray-800 mb-3 pb-1 border-b border-gray-300"
+                    class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
                     教育经历
                   </h3>
-                  <div class="space-y-3">
+                  <div class="space-y-4">
                     <div
                       v-for="edu in resumeData.education"
                       :key="edu.id"
-                      class="border-l-3 border-green-500 pl-4"
+                      class="pb-4 border-b border-gray-200 last:border-b-0"
                     >
-                      <div class="flex justify-between items-start mb-1">
-                        <div>
-                          <h4 class="font-semibold text-gray-900">
+                      <div class="flex justify-between items-start mb-2">
+                        <div class="flex-1">
+                          <h4 class="font-bold text-gray-900 text-base mb-1">
                             {{ edu.school || '学校名称' }}
                           </h4>
-                          <p class="text-gray-600">
+                          <p class="text-gray-700 font-medium">
                             {{ edu.degree || '学历' }} · {{ edu.major || '专业' }}
                           </p>
                         </div>
-                        <span class="text-sm text-gray-500">
-                          {{ edu.startDate || '开始时间' }} - {{ edu.endDate || '结束时间' }}
-                        </span>
+                        <div class="text-right ml-4">
+                          <span class="text-sm text-gray-600 font-medium">
+                            {{ formatDate(edu.startDate) || '开始时间' }} - {{ formatDate(edu.endDate) || '结束时间' }}
+                          </span>
+                        </div>
                       </div>
-                      <p v-if="edu.gpa" class="text-sm text-gray-600">GPA: {{ edu.gpa }}</p>
+                      <p v-if="edu.gpa" class="text-sm text-gray-600 mt-1">GPA: {{ edu.gpa }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 工作经验 -->
+                <div v-if="resumeData.workExperience.length > 0" class="mb-6">
+                  <h3
+                    class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
+                  >
+                    工作经验
+                  </h3>
+                  <div class="space-y-6">
+                    <div
+                      v-for="exp in resumeData.workExperience"
+                      :key="exp.id"
+                      class="pb-4 border-b border-gray-200 last:border-b-0"
+                    >
+                      <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1">
+                          <h4 class="font-bold text-gray-900 text-base mb-1">
+                            {{ exp.position || '职位名称' }}
+                          </h4>
+                          <p class="text-gray-700 font-medium">{{ exp.company || '公司名称' }}</p>
+                        </div>
+                        <div class="text-right ml-4">
+                          <span class="text-sm text-gray-600 font-medium">
+                            {{ formatDate(exp.startDate) || '开始时间' }} - {{ formatDate(exp.endDate) || '结束时间' }}
+                          </span>
+                        </div>
+                      </div>
+                      <div v-if="exp.description" class="text-gray-700 text-sm leading-relaxed">
+                        {{ exp.description }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 项目经历 -->
+                <div v-if="resumeData.projects.length > 0" class="mb-6">
+                  <h3
+                    class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
+                  >
+                    项目经历
+                  </h3>
+                  <div class="space-y-6">
+                    <div
+                      v-for="project in resumeData.projects"
+                      :key="project.id"
+                      class="pb-4 border-b border-gray-200 last:border-b-0"
+                    >
+                      <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1">
+                          <h4 class="font-bold text-gray-900 text-base mb-1">
+                            {{ project.name || '项目名称' }}
+                          </h4>
+                          <p class="text-gray-700 font-medium">
+                            {{ project.role || '担任角色' }}
+                          </p>
+                        </div>
+                        <div class="text-right ml-4">
+                          <span class="text-sm text-gray-600 font-medium">
+                            {{ formatDate(project.startDate) || '开始时间' }} -
+                            {{ formatDate(project.endDate) || '结束时间' }}
+                          </span>
+                        </div>
+                      </div>
+                      <div v-if="project.technologies" class="text-sm text-gray-600 mb-2">
+                        <strong>技术栈：</strong>{{ project.technologies }}
+                      </div>
+                      <div v-if="project.description" class="text-gray-700 text-sm leading-relaxed">
+                        {{ project.description }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -451,7 +542,7 @@
                 <!-- 技能专长 -->
                 <div v-if="resumeData.skills.length > 0" class="mb-6">
                   <h3
-                    class="text-lg font-semibold text-gray-800 mb-3 pb-1 border-b border-gray-300"
+                    class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
                     技能专长
                   </h3>
@@ -459,11 +550,11 @@
                     <div
                       v-for="skill in resumeData.skills"
                       :key="skill.id"
-                      class="flex justify-between items-center"
+                      class="flex justify-between items-center py-2"
                     >
-                      <span class="text-gray-700">{{ skill.name || '技能名称' }}</span>
+                      <span class="text-gray-700 font-medium">{{ skill.name || '技能名称' }}</span>
                       <div class="flex">
-                        <span v-for="i in 5" :key="i" class="text-sm">
+                        <span v-for="i in 5" :key="i" class="text-sm text-gray-600">
                           {{ i <= (skill.level || 3) ? '●' : '○' }}
                         </span>
                       </div>
@@ -474,36 +565,38 @@
                 <!-- 项目经历 -->
                 <div v-if="resumeData.projects.length > 0" class="mb-6">
                   <h3
-                    class="text-lg font-semibold text-gray-800 mb-3 pb-1 border-b border-gray-300"
+                    class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
                     项目经历
                   </h3>
-                  <div class="space-y-4">
+                  <div class="space-y-6">
                     <div
                       v-for="project in resumeData.projects"
                       :key="project.id"
-                      class="border-l-3 border-purple-500 pl-4"
+                      class="pb-4 border-b border-gray-200 last:border-b-0"
                     >
-                      <div class="flex justify-between items-start mb-2">
-                        <div>
-                          <h4 class="font-semibold text-gray-900">
+                      <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1">
+                          <h4 class="font-bold text-gray-900 text-base mb-1">
                             {{ project.name || '项目名称' }}
                           </h4>
-                          <p class="text-purple-600 font-medium">
+                          <p class="text-gray-700 font-medium">
                             {{ project.role || '担任角色' }}
                           </p>
                         </div>
-                        <span class="text-sm text-gray-500">
-                          {{ project.startDate || '开始时间' }} -
-                          {{ project.endDate || '结束时间' }}
-                        </span>
+                        <div class="text-right ml-4">
+                          <span class="text-sm text-gray-600 font-medium">
+                            {{ formatDate(project.startDate) || '开始时间' }} -
+                            {{ formatDate(project.endDate) || '结束时间' }}
+                          </span>
+                        </div>
                       </div>
-                      <p v-if="project.technologies" class="text-sm text-gray-600 mb-2">
+                      <div v-if="project.technologies" class="text-sm text-gray-600 mb-2">
                         <strong>技术栈：</strong>{{ project.technologies }}
-                      </p>
-                      <p v-if="project.description" class="text-gray-700 text-sm leading-relaxed">
+                      </div>
+                      <div v-if="project.description" class="text-gray-700 text-sm leading-relaxed">
                         {{ project.description }}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -544,6 +637,40 @@
   // 计算属性
   const currentTemplate = computed(() => resumeStore.currentTemplate)
   const resumeData = computed(() => resumeStore.resumeData)
+
+  // 时间格式化函数
+  const formatDate = (dateStr) => {
+    if (!dateStr) return ''
+    
+    // 如果已经是格式化的日期，直接返回
+    if (dateStr.includes('年') || dateStr.includes('月')) return dateStr
+    
+    // 处理常见的日期格式
+    const date = new Date(dateStr)
+    if (!isNaN(date.getTime())) {
+      return `${date.getFullYear()}年${String(date.getMonth() + 1).padStart(2, '0')}月`
+    }
+    
+    // 处理 YYYY-MM 格式
+    if (/^\d{4}-\d{1,2}$/.test(dateStr)) {
+      const [year, month] = dateStr.split('-')
+      return `${year}年${String(month).padStart(2, '0')}月`
+    }
+    
+    // 处理 YYYY/MM 格式
+    if (/^\d{4}\/\d{1,2}$/.test(dateStr)) {
+      const [year, month] = dateStr.split('/')
+      return `${year}年${String(month).padStart(2, '0')}月`
+    }
+    
+    // 处理纯数字年份
+    if (/^\d{4}$/.test(dateStr)) {
+      return `${dateStr}年`
+    }
+    
+    // 其他情况直接返回原字符串
+    return dateStr
+  }
 
   // 方法
   const goBack = () => {
@@ -609,10 +736,10 @@
           result = await ResumeExportImport.exportToPDF(previewElement, `${fileName}.pdf`)
           break
         case 'json':
-          result = ResumeExportImport.exportResumeData(resumeData.value, `${fileName}-data.json`)
+          result = ResumeExportImport.exportResumeData(resumeStore.exportResumeData(), `${fileName}-data.json`)
           break
         case 'all':
-          result = await ResumeExportImport.exportAll(previewElement, resumeData.value, fileName)
+          result = await ResumeExportImport.exportAll(previewElement, resumeStore.exportResumeData(), fileName)
           break
         default:
           loading.close()

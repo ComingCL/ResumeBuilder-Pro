@@ -11,7 +11,11 @@ export const useResumeStore = defineStore('resume', {
         email: '',
         address: '',
         avatar: '',
-        summary: ''
+        summary: '',
+        github: '',
+        blog: '',
+        linkedin: '',
+        website: ''
       },
       workExperience: [],
       education: [],
@@ -20,10 +24,10 @@ export const useResumeStore = defineStore('resume', {
       awards: [],
       languages: []
     },
-    
+
     // 当前选择的模板ID
     selectedTemplateId: 'template1',
-    
+
     // 可用的模板列表
     templates: [
       {
@@ -66,18 +70,18 @@ export const useResumeStore = defineStore('resume', {
 
   getters: {
     // 获取当前模板信息
-    currentTemplate: (state) => {
+    currentTemplate: state => {
       return state.templates.find(t => t.id === state.selectedTemplateId)
     },
 
     // 检查简历是否完整
-    isResumeComplete: (state) => {
+    isResumeComplete: state => {
       const { personalInfo } = state.resumeData
       return !!(personalInfo.name && personalInfo.email && personalInfo.phone)
     },
 
     // 获取简历完成度百分比
-    resumeCompleteness: (state) => {
+    resumeCompleteness: state => {
       const fields = [
         state.resumeData.personalInfo.name,
         state.resumeData.personalInfo.email,
@@ -118,7 +122,10 @@ export const useResumeStore = defineStore('resume', {
     updateWorkExperience(id, experience) {
       const index = this.resumeData.workExperience.findIndex(exp => exp.id === id)
       if (index !== -1) {
-        this.resumeData.workExperience[index] = { ...this.resumeData.workExperience[index], ...experience }
+        this.resumeData.workExperience[index] = {
+          ...this.resumeData.workExperience[index],
+          ...experience
+        }
         this.saveToLocalStorage()
       }
     },
@@ -185,6 +192,36 @@ export const useResumeStore = defineStore('resume', {
       this.saveToLocalStorage()
     },
 
+    // 添加项目
+    addProject(project) {
+      this.resumeData.projects.push({
+        id: Date.now(),
+        name: '',
+        role: '',
+        startDate: '',
+        endDate: '',
+        technologies: '',
+        description: '',
+        ...project
+      })
+      this.saveToLocalStorage()
+    },
+
+    // 更新项目
+    updateProject(id, project) {
+      const index = this.resumeData.projects.findIndex(p => p.id === id)
+      if (index !== -1) {
+        this.resumeData.projects[index] = { ...this.resumeData.projects[index], ...project }
+        this.saveToLocalStorage()
+      }
+    },
+
+    // 删除项目
+    removeProject(id) {
+      this.resumeData.projects = this.resumeData.projects.filter(p => p.id !== id)
+      this.saveToLocalStorage()
+    },
+
     // 选择模板
     selectTemplate(templateId) {
       this.selectedTemplateId = templateId
@@ -201,7 +238,11 @@ export const useResumeStore = defineStore('resume', {
           email: '',
           address: '',
           avatar: '',
-          summary: ''
+          summary: '',
+          github: '',
+          blog: '',
+          linkedin: '',
+          website: ''
         },
         workExperience: [],
         education: [],
@@ -216,10 +257,13 @@ export const useResumeStore = defineStore('resume', {
     // 保存到本地存储
     saveToLocalStorage() {
       try {
-        localStorage.setItem('resumeBuilderData', JSON.stringify({
-          resumeData: this.resumeData,
-          selectedTemplateId: this.selectedTemplateId
-        }))
+        localStorage.setItem(
+          'resumeBuilderData',
+          JSON.stringify({
+            resumeData: this.resumeData,
+            selectedTemplateId: this.selectedTemplateId
+          })
+        )
       } catch (error) {
         console.error('保存到本地存储失败:', error)
       }

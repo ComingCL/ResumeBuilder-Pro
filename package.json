@@ -7,13 +7,14 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "element-plus": "^2.4.4",
     "html2canvas": "^1.4.1",
-    "jspdf": "^2.5.1",
+    "jspdf": "^2.5.2",
     "pinia": "^2.1.7",
     "sortablejs": "^1.15.0",
     "vue": "^3.4.0",
@@ -21,10 +22,17 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
     "@unocss/preset-attributify": "^66.5.4",
     "@unocss/preset-icons": "^66.5.4",
     "@unocss/preset-uno": "^66.5.4",
     "@vitejs/plugin-vue": "^4.5.2",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-vue": "^10.5.1",
+    "prettier": "^3.6.2",
     "sass": "^1.69.5",
     "unocss": "^66.5.4",
     "unplugin-auto-import": "^0.17.2",

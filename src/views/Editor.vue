@@ -113,7 +113,16 @@
                     />
                   </el-form-item>
                 </div>
-                <el-form-item label="个人简介" class="mb-0">
+                <div class="mb-2">
+                  <label class="text-sm text-gray-600 mb-1 block">个人简介</label>
+                  <v-md-editor
+                    v-model="resumeData.personalInfo.summary"
+                    height="200px"
+                    mode="edit"
+                    placeholder="## 关于我&#10;我是一名经验丰富的**前端开发工程师**，专注于：&#10;- 现代化前端技术栈&#10;- 用户体验优化&#10;- 团队协作与项目管理"
+                  />
+                </div>
+                <el-form-item class="mb-0 hidden">
                   <el-input
                     type="textarea"
                     v-model="resumeData.personalInfo.summary"
@@ -238,7 +247,7 @@
                     />
                   </div>
                   <div class="mb-2">
-                    <label class="text-sm text-gray-600 mb-1 block">工作描述和主要成就 (支持Markdown格式)</label>
+                    <label class="text-sm text-gray-600 mb-1 block">工作描述和主要成就</label>
                     <v-md-editor
                       v-model="exp.description"
                       height="200px"
@@ -431,9 +440,9 @@
                   >
                     个人简介
                   </h3>
-                  <p class="text-gray-700 leading-relaxed text-sm">
-                    {{ resumeData.personalInfo.summary }}
-                  </p>
+                  <div class="text-gray-700 leading-relaxed text-sm markdown-content">
+                    <v-md-preview :text="resumeData.personalInfo.summary || ''" />
+                  </div>
                 </div>
 
                 <!-- 教育经历 -->

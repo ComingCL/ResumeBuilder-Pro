@@ -52,7 +52,9 @@
               <span class="title-text">个人简介</span>
               <div class="title-line"></div>
             </h2>
-            <p class="summary-text">{{ resumeData.personalInfo.summary }}</p>
+            <div class="summary-text markdown-content">
+              <v-md-preview :text="resumeData.personalInfo.summary || ''" />
+            </div>
           </div>
 
           <!-- 工作经验 -->

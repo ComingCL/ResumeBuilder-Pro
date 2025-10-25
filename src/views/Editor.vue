@@ -61,7 +61,7 @@
 
             <!-- 个人信息部分 -->
             <div class="mb-8">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-3 border-b-2 border-blue-500">
                 <el-icon class="mr-2"><User /></el-icon>
                 个人信息
               </h3>
@@ -128,7 +128,7 @@
             <div class="mb-8">
               <div class="flex items-center justify-between mb-4">
                 <h3
-                  class="text-lg font-semibold text-gray-800 pb-2 border-b border-gray-200 flex-1"
+                  class="text-lg font-semibold text-gray-800 pb-3 border-b-2 border-green-500 flex-1"
                 >
                   <el-icon class="mr-2"><School /></el-icon>
                   教育经历
@@ -188,7 +188,7 @@
             <div class="mb-8">
               <div class="flex items-center justify-between mb-4">
                 <h3
-                  class="text-lg font-semibold text-gray-800 pb-2 border-b border-gray-200 flex-1"
+                  class="text-lg font-semibold text-gray-800 pb-3 border-b-2 border-purple-500 flex-1"
                 >
                   <el-icon class="mr-2"><Briefcase /></el-icon>
                   工作经验
@@ -237,13 +237,15 @@
                       value-format="YYYY-MM"
                     />
                   </div>
-                  <el-input
-                    type="textarea"
-                    v-model="exp.description"
-                    placeholder="工作描述和主要成就"
-                    :rows="3"
-                    size="small"
-                  />
+                  <div class="mb-2">
+                    <label class="text-sm text-gray-600 mb-1 block">工作描述和主要成就 (支持Markdown格式)</label>
+                    <v-md-editor
+                      v-model="exp.description"
+                      height="200px"
+                      mode="edit"
+                      placeholder="## 主要职责&#10;- 负责前端开发工作&#10;- 参与项目架构设计&#10;&#10;## 主要成就&#10;- 提升页面加载速度30%&#10;- 完成XX项目开发"
+                    />
+                  </div>
                 </div>
               </div>
               <div v-else class="text-center py-8 text-gray-500">
@@ -258,7 +260,7 @@
             <div class="mb-8">
               <div class="flex items-center justify-between mb-4">
                 <h3
-                  class="text-lg font-semibold text-gray-800 pb-2 border-b border-gray-200 flex-1"
+                  class="text-lg font-semibold text-gray-800 pb-3 border-b-2 border-orange-500 flex-1"
                 >
                   <el-icon class="mr-2"><Tools /></el-icon>
                   技能专长
@@ -296,7 +298,7 @@
             <div class="mb-8">
               <div class="flex items-center justify-between mb-4">
                 <h3
-                  class="text-lg font-semibold text-gray-800 pb-2 border-b border-gray-200 flex-1"
+                  class="text-lg font-semibold text-gray-800 pb-3 border-b-2 border-red-500 flex-1"
                 >
                   <el-icon class="mr-2"><FolderOpened /></el-icon>
                   项目经历
@@ -493,8 +495,8 @@
                           </span>
                         </div>
                       </div>
-                      <div v-if="exp.description" class="text-gray-700 text-sm leading-relaxed">
-                        {{ exp.description }}
+                      <div v-if="exp.description" class="text-gray-700 text-sm leading-relaxed markdown-content">
+                        <v-md-preview :text="exp.description" />
                       </div>
                     </div>
                   </div>
@@ -917,5 +919,78 @@
   header {
     height: 60px;
     flex-shrink: 0;
+  }
+
+  /* Markdown 内容样式 */
+  .markdown-content :deep(ul) {
+    list-style-type: disc;
+    margin-left: 1rem;
+    padding-left: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .markdown-content :deep(ol) {
+    list-style-type: decimal;
+    margin-left: 1rem;
+    padding-left: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .markdown-content :deep(li) {
+    margin-bottom: 0.25rem;
+    line-height: 1.6;
+  }
+
+  .markdown-content :deep(h1),
+  .markdown-content :deep(h2),
+  .markdown-content :deep(h3),
+  .markdown-content :deep(h4),
+  .markdown-content :deep(h5),
+  .markdown-content :deep(h6) {
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+  }
+
+  .markdown-content :deep(h1) {
+    font-size: 1.5rem;
+  }
+
+  .markdown-content :deep(h2) {
+    font-size: 1.25rem;
+  }
+
+  .markdown-content :deep(h3) {
+    font-size: 1.125rem;
+  }
+
+  .markdown-content :deep(p) {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .markdown-content :deep(strong) {
+    font-weight: 600;
+  }
+
+  .markdown-content :deep(em) {
+    font-style: italic;
+  }
+
+  .markdown-content :deep(code) {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+  }
+
+  .markdown-content :deep(blockquote) {
+    border-left: 4px solid #e5e7eb;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #6b7280;
+    font-style: italic;
   }
 </style>

@@ -7,48 +7,161 @@ import jsPDF from 'jspdf'
  */
 export class ResumeExportImport {
   /**
-   * 导出简历为PDF
+   * 导出简历为PDF（使用浏览器打印API，支持CSS分页控制）
    * @param {HTMLElement} element - 要导出的DOM元素
    * @param {string} filename - 文件名
    * @param {Object} options - 导出选项
    */
   static async exportToPDF(element, filename = 'resume.pdf', options = {}) {
     try {
+      // 直接使用html2canvas导出PDF
+      return await this.exportToPDFWithCanvas(element, filename, options)
+    } catch (error) {
+      console.error('PDF导出失败:', error)
+      return {
+        success: false,
+        message: `PDF导出失败: ${error.message}`
+      }
+    }
+  }
+
+  /**
+   * 使用浏览器打印API导出PDF（支持CSS分页控制）
+   */
+  static async exportToPDFWithPrint(element, filename) {
+    return new Promise((resolve) => {
+      // 创建一个新的窗口用于打印
+      const printWindow = window.open('', '_blank')
+      
+      // 获取当前页面的所有样式
+      const styles = Array.from(document.styleSheets)
+        .map(styleSheet => {
+          try {
+            return Array.from(styleSheet.cssRules)
+              .map(rule => rule.cssText)
+              .join('\n')
+          } catch (e) {
+            return ''
+          }
+        })
+        .join('\n')
+
+      // 构建打印页面HTML
+      const printHTML = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <title>${filename}</title>
+            <style>
+              ${styles}
+              
+              /* 额外的分页控制 */
+              @page {
+                size: A4;
+                margin: 20mm;
+              }
+              
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                line-height: 1.6;
+                color: #333;
+              }
+              
+              .resume-section {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+              }
+              
+              .section-title {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+              }
+              
+              .experience-item,
+              .education-item,
+              .project-item {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+              }
+            </style>
+          </head>
+          <body>
+            ${element.outerHTML}
+          </body>
+        </html>
+      `
+
+      printWindow.document.write(printHTML)
+      printWindow.document.close()
+
+      // 等待内容加载完成后触发打印
+      printWindow.onload = () => {
+        setTimeout(() => {
+          printWindow.print()
+          printWindow.close()
+          resolve({
+            success: true,
+            message: '请在浏览器打印对话框中选择"保存为PDF"'
+          })
+        }, 500)
+      }
+    })
+  }
+
+  /**
+   * 使用html2canvas导出PDF（智能分页版本）
+   */
+  static async exportToPDFWithCanvas(element, filename, options = {}) {
+    try {
+      // 先克隆元素，在克隆的元素上应用分页优化
+      const clonedElement = element.cloneNode(true)
+      document.body.appendChild(clonedElement)
+      
+      // 设置克隆元素的样式，确保与原元素一致
+      clonedElement.style.position = 'absolute'
+      clonedElement.style.left = '-9999px'
+      clonedElement.style.top = '0'
+      clonedElement.style.width = element.offsetWidth + 'px'
+      clonedElement.style.backgroundColor = '#ffffff'
+      
+      // 应用分页优化样式
+      this.applyPageBreakStyles(clonedElement)
+
       const defaultOptions = {
         scale: 2, // 提高清晰度
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: element.offsetWidth,
-        height: element.offsetHeight,
+        width: clonedElement.offsetWidth,
+        height: clonedElement.offsetHeight,
         ...options
       }
 
       // 生成canvas
-      const canvas = await html2canvas(element, defaultOptions)
+      const canvas = await html2canvas(clonedElement, defaultOptions)
+      
+      // 清理克隆的元素
+      document.body.removeChild(clonedElement)
 
       // 计算PDF尺寸 (A4: 210mm x 297mm)
       const imgWidth = 210
+      const pageHeight = 297 // A4页面高度
       const imgHeight = (canvas.height * imgWidth) / canvas.width
 
       // 创建PDF
       const pdf = new jsPDF('p', 'mm', 'a4')
       const imgData = canvas.toDataURL('image/png')
 
-      // 如果内容高度超过一页，需要分页
-      let heightLeft = imgHeight
-      let position = 0
-
-      // 添加第一页
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-      heightLeft -= 297 // A4页面高度
-
-      // 添加额外页面
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight
-        pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-        heightLeft -= 297
+      // 智能分页处理
+      if (imgHeight <= pageHeight) {
+        // 内容适合单页
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight)
+      } else {
+        // 需要多页处理
+        await this.addPagesWithSmartBreaks(pdf, imgData, imgWidth, imgHeight, pageHeight, clonedElement)
       }
 
       // 下载PDF
@@ -64,6 +177,91 @@ export class ResumeExportImport {
         success: false,
         message: 'PDF导出失败: ' + error.message
       }
+    }
+  }
+
+  /**
+   * 应用分页优化样式
+   */
+  static applyPageBreakStyles(element) {
+    // 添加分页控制CSS
+    const style = document.createElement('style')
+    style.textContent = `
+      .resume-section {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-bottom: 20px !important;
+      }
+      
+      .section-title {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-bottom: 10px !important;
+      }
+      
+      .experience-item,
+      .education-item,
+      .project-item {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-bottom: 15px !important;
+      }
+      
+      .exp-header,
+      .edu-header,
+      .project-header {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    `
+    element.appendChild(style)
+    
+    // 为关键元素添加分页控制类
+    const sections = element.querySelectorAll('.resume-section')
+    sections.forEach(section => {
+      section.style.pageBreakInside = 'avoid'
+      section.style.breakInside = 'avoid'
+    })
+    
+    const titles = element.querySelectorAll('.section-title')
+    titles.forEach(title => {
+      title.style.pageBreakAfter = 'avoid'
+      title.style.breakAfter = 'avoid'
+      title.style.pageBreakInside = 'avoid'
+      title.style.breakInside = 'avoid'
+    })
+    
+    const items = element.querySelectorAll('.experience-item, .education-item, .project-item')
+    items.forEach(item => {
+      item.style.pageBreakInside = 'avoid'
+      item.style.breakInside = 'avoid'
+    })
+  }
+
+  /**
+   * 智能分页添加
+   */
+  static async addPagesWithSmartBreaks(pdf, imgData, imgWidth, imgHeight, pageHeight, element) {
+    let currentY = 0
+    let pageCount = 0
+    
+    // 计算需要的页数
+    const totalPages = Math.ceil(imgHeight / pageHeight)
+    
+    for (let i = 0; i < totalPages; i++) {
+      if (i > 0) {
+        pdf.addPage()
+      }
+      
+      // 计算当前页的Y位置
+      const yPosition = -(i * pageHeight)
+      
+      // 添加图片到当前页
+      pdf.addImage(imgData, 'PNG', 0, yPosition, imgWidth, imgHeight)
+      
+      currentY += pageHeight
     }
   }
 

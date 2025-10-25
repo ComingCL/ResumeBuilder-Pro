@@ -305,6 +305,7 @@
 
   .resume-section {
     margin-bottom: 2rem;
+    page-break-inside: avoid;
   }
 
   .section-title {
@@ -356,6 +357,7 @@
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid #f3f4f6;
+    page-break-inside: avoid;
   }
 
   .experience-item:last-child,
@@ -566,6 +568,108 @@
     
     .skills-grid {
       grid-template-columns: 1fr;
+    }
+  }
+/* PDF导出和打印优化 */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    
+    .resume-wrapper {
+      box-shadow: none;
+      border-radius: 0;
+      margin: 0;
+      max-width: none;
+    }
+    
+    .resume-page {
+      padding: 1.5rem;
+    }
+    
+    /* 强制整个section不被分割 */
+    .resume-section {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      page-break-before: auto;
+      break-before: auto;
+      orphans: 3;
+      widows: 3;
+    }
+    
+    /* 标题必须与内容在同一页 */
+    .section-title {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      orphans: 2;
+      widows: 2;
+    }
+    
+    /* 条目级保护 */
+    .experience-item,
+    .education-item,
+    .project-item {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      page-break-before: auto;
+      break-before: auto;
+      orphans: 2;
+      widows: 2;
+      margin-bottom: 1rem;
+    }
+    
+    /* 条目标题保护 */
+    .exp-header,
+    .edu-header,
+    .project-header {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    
+    /* 列表容器保护 */
+    .experience-list,
+    .education-list,
+    .projects-list {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    
+    /* 确保markdown内容不被分割 */
+    .markdown-content {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      orphans: 2;
+      widows: 2;
+    }
+    
+    /* 技能列表优化 */
+    .skills-list {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    
+    /* 标题线保护 */
+    .title-line {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    
+    /* 联系信息保护 */
+    .resume-contact {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    
+    /* 个人简介保护 */
+    .summary-text {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      orphans: 2;
+      widows: 2;
     }
   }
 </style>

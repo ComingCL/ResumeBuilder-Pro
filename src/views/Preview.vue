@@ -290,9 +290,10 @@
   .contact-row {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    gap: 1rem 1rem;
     margin-bottom: 0.5rem;
     flex-wrap: wrap;
+    row-gap: 0.25rem;
   }
 
   .contact-row span {

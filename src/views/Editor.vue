@@ -413,7 +413,7 @@
                         📍 {{ resumeData.personalInfo.address }}
                       </span>
                     </div>
-                    <div class="flex justify-center items-center gap-6 flex-wrap mt-2">
+                    <div class="flex justify-center items-center gap-4 flex-wrap mt-2 contact-github-blog">
                       <span v-if="resumeData.personalInfo.github">
                         🔗 GitHub: {{ resumeData.personalInfo.github }}
                       </span>
@@ -992,5 +992,10 @@
     margin: 1rem 0;
     color: #6b7280;
     font-style: italic;
+  }
+
+  /* GitHub和博客换行间距控制 */
+  .contact-github-blog {
+    row-gap: 0.25rem;
   }
 </style>

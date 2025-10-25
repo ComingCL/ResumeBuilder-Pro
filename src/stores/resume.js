@@ -145,6 +145,7 @@ export const useResumeStore = defineStore('resume', {
         major: '',
         startDate: '',
         endDate: '',
+        current: false,
         gpa: '',
         ...education
       })
@@ -200,6 +201,7 @@ export const useResumeStore = defineStore('resume', {
         role: '',
         startDate: '',
         endDate: '',
+        current: false,
         technologies: '',
         description: '',
         ...project

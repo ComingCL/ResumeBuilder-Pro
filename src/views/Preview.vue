@@ -86,7 +86,7 @@
               <div v-for="edu in resumeData.education" :key="edu.id" class="education-item">
                 <div class="edu-header">
                   <h3 class="edu-title">{{ edu.school }} - {{ edu.degree }}</h3>
-                  <span class="edu-date">{{ formatDateRange(edu.startDate, edu.endDate) }}</span>
+                  <span class="edu-date">{{ formatDateRange(edu.startDate, edu.endDate, edu.current) }}</span>
                 </div>
                 <p class="edu-major" v-if="edu.major">专业：{{ edu.major }}</p>
                 <p class="edu-gpa" v-if="edu.gpa">GPA：{{ edu.gpa }}</p>
@@ -127,7 +127,7 @@
               <div v-for="project in resumeData.projects" :key="project.id" class="project-item">
                 <div class="project-header">
                   <h3 class="project-title">{{ project.name }}</h3>
-                  <span class="project-date">{{ formatDateRange(project.startDate, project.endDate) }}</span>
+                  <span class="project-date">{{ formatDateRange(project.startDate, project.endDate, project.current) }}</span>
                 </div>
                 <p class="project-role" v-if="project.role">角色：{{ project.role }}</p>
                 <p class="project-tech" v-if="project.technologies">技术栈：{{ project.technologies }}</p>

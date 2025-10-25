@@ -168,21 +168,15 @@
                     <el-input v-model="edu.gpa" placeholder="GPA (可选)" size="small" />
                   </div>
                   <div class="grid grid-cols-2 gap-3">
-                    <el-date-picker
+                    <DatePickerWithCurrent
                       v-model="edu.startDate"
-                      type="month"
                       placeholder="开始时间"
-                      size="small"
-                      format="YYYY年MM月"
-                      value-format="YYYY-MM"
+                      :show-current="false"
                     />
-                    <el-date-picker
+                    <DatePickerWithCurrent
                       v-model="edu.endDate"
-                      type="month"
+                      v-model:current="edu.current"
                       placeholder="结束时间"
-                      size="small"
-                      format="YYYY年MM月"
-                      value-format="YYYY-MM"
                     />
                   </div>
                 </div>
@@ -229,21 +223,15 @@
                     <el-input v-model="exp.position" placeholder="职位名称" size="small" />
                   </div>
                   <div class="grid grid-cols-2 gap-3 mb-3">
-                    <el-date-picker
+                    <DatePickerWithCurrent
                       v-model="exp.startDate"
-                      type="month"
                       placeholder="开始时间"
-                      size="small"
-                      format="YYYY年MM月"
-                      value-format="YYYY-MM"
+                      :show-current="false"
                     />
-                    <el-date-picker
+                    <DatePickerWithCurrent
                       v-model="exp.endDate"
-                      type="month"
+                      v-model:current="exp.current"
                       placeholder="结束时间"
-                      size="small"
-                      format="YYYY年MM月"
-                      value-format="YYYY-MM"
                     />
                   </div>
                   <div class="mb-2">
@@ -339,21 +327,15 @@
                     <el-input v-model="project.role" placeholder="担任角色" size="small" />
                   </div>
                   <div class="grid grid-cols-2 gap-3 mb-3">
-                    <el-date-picker
+                    <DatePickerWithCurrent
                       v-model="project.startDate"
-                      type="month"
                       placeholder="开始时间"
-                      size="small"
-                      format="YYYY年MM月"
-                      value-format="YYYY-MM"
+                      :show-current="false"
                     />
-                    <el-date-picker
+                    <DatePickerWithCurrent
                       v-model="project.endDate"
-                      type="month"
+                      v-model:current="project.current"
                       placeholder="结束时间"
-                      size="small"
-                      format="YYYY年MM月"
-                      value-format="YYYY-MM"
                     />
                   </div>
                   <el-input
@@ -469,7 +451,7 @@
                         </div>
                         <div class="text-right ml-4">
                           <span class="text-sm text-gray-600 font-medium">
-                            {{ formatDate(edu.startDate) || '开始时间' }} - {{ formatDate(edu.endDate) || '结束时间' }}
+                            {{ formatDateRange(edu.startDate, edu.endDate, edu.current) || '开始时间 - 结束时间' }}
                           </span>
                         </div>
                       </div>
@@ -500,7 +482,7 @@
                         </div>
                         <div class="text-right ml-4">
                           <span class="text-sm text-gray-600 font-medium">
-                            {{ formatDate(exp.startDate) || '开始时间' }} - {{ formatDate(exp.endDate) || '结束时间' }}
+                            {{ formatDateRange(exp.startDate, exp.endDate, exp.current) || '开始时间 - 结束时间' }}
                           </span>
                         </div>
                       </div>
@@ -535,8 +517,7 @@
                         </div>
                         <div class="text-right ml-4">
                           <span class="text-sm text-gray-600 font-medium">
-                            {{ formatDate(project.startDate) || '开始时间' }} -
-                            {{ formatDate(project.endDate) || '结束时间' }}
+                            {{ formatDateRange(project.startDate, project.endDate, project.current) || '开始时间 - 结束时间' }}
                           </span>
                         </div>
                       </div>
@@ -597,8 +578,7 @@
                         </div>
                         <div class="text-right ml-4">
                           <span class="text-sm text-gray-600 font-medium">
-                            {{ formatDate(project.startDate) || '开始时间' }} -
-                            {{ formatDate(project.endDate) || '结束时间' }}
+                            {{ formatDateRange(project.startDate, project.endDate, project.current) || '开始时间 - 结束时间' }}
                           </span>
                         </div>
                       </div>
@@ -624,6 +604,7 @@
   import { computed, watch } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import { useResumeStore } from '@/stores/resume'
+  import DatePickerWithCurrent from '@/components/DatePickerWithCurrent.vue'
   import {
     ArrowLeft,
     Download,
@@ -681,6 +662,32 @@
     
     // 其他情况直接返回原字符串
     return dateStr
+  }
+
+  // 日期范围格式化函数（支持"至今"）
+  const formatDateRange = (startDate, endDate, current = false) => {
+    if (!startDate) return ''
+    
+    const formatSingleDate = (dateStr) => {
+      if (!dateStr) return ''
+      if (dateStr.includes('年') || dateStr.includes('月')) return dateStr
+      
+      if (/^\d{4}-\d{1,2}$/.test(dateStr)) {
+        const [year, month] = dateStr.split('-')
+        return `${year}年${String(month).padStart(2, '0')}月`
+      }
+      return dateStr
+    }
+
+    const start = formatSingleDate(startDate)
+    if (current) {
+      return `${start} - 至今`
+    }
+    
+    const end = formatSingleDate(endDate)
+    if (!end) return start
+    
+    return `${start} - ${end}`
   }
 
   // 方法

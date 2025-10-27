@@ -10,14 +10,6 @@ const routes = [
     }
   },
   {
-    path: '/templates',
-    name: 'Templates',
-    component: () => import('@/views/Templates.vue'),
-    meta: {
-      title: '模板选择 - ResumeBuilder Pro'
-    }
-  },
-  {
     path: '/editor/:templateId?',
     name: 'Editor',
     component: () => import('@/views/Editor.vue'),

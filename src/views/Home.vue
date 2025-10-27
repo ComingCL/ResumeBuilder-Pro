@@ -108,42 +108,70 @@
       </section>
 
       <!-- 模板预览区域 -->
-      <section class="py-12 bg-white">
+      <section class="py-12 bg-white template-section">
         <div class="container mx-auto px-4">
           <div class="text-center mb-12">
             <h3 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">精美模板，任您选择</h3>
             <p class="text-lg text-gray-600">多种风格模板，适合不同行业和职位</p>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <div
-              class="bg-white rounded-lg overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
-              v-for="template in displayTemplates"
+              class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 cursor-pointer group"
+              v-for="template in resumeStore.templates"
               :key="template.id"
               @click="selectTemplate(template.id)"
             >
-              <div class="relative h-50 overflow-hidden">
-                <div class="w-full h-full bg-gray-100 flex items-center justify-center">
-                  <!-- 模板预览占位图 -->
-                  <div class="text-5xl text-gray-400">
-                    <el-icon><Document /></el-icon>
+              <div class="relative">
+                <div class="aspect-[3/4] bg-gray-50 rounded-t-lg overflow-hidden relative">
+                  <img
+                    :src="template.preview"
+                    :alt="template.name + ' 预览'"
+                    class="w-full h-full object-cover"
+                    @error="handleImageError"
+                  />
+                  
+                  <!-- 悬停遮罩 -->
+                  <div
+                    class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
+                  >
+                    <div class="flex flex-col gap-2">
+                      <el-button type="primary" size="large">
+                        <el-icon><View /></el-icon>
+                        预览模板
+                      </el-button>
+                      <el-button size="large">
+                        <el-icon><Edit /></el-icon>
+                        使用模板
+                      </el-button>
+                    </div>
                   </div>
                 </div>
-                <div
-                  class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                >
-                  <el-button type="primary">选择模板</el-button>
+
+                <div class="p-4">
+                  <div class="flex items-start justify-between mb-2">
+                    <h3 class="font-semibold text-gray-900 text-lg truncate flex-1 mr-2">
+                      {{ template.name }}
+                    </h3>
+                    <el-tag :type="getCategoryType(template.category)" size="small">
+                      {{ getCategoryName(template.category) }}
+                    </el-tag>
+                  </div>
+                  <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ template.description }}</p>
+
+                  <div class="flex flex-col gap-2">
+                    <el-button
+                      type="primary"
+                      @click.stop="selectTemplate(template.id)"
+                      class="w-full"
+                    >
+                      <el-icon><Edit /></el-icon>
+                      使用此模板
+                    </el-button>
+                  </div>
                 </div>
               </div>
-              <div class="p-6">
-                <h5 class="text-lg font-medium text-gray-900 mb-2">{{ template.name }}</h5>
-                <p class="text-sm text-gray-600">{{ template.description }}</p>
-              </div>
             </div>
-          </div>
-
-          <div class="text-center">
-            <el-button type="primary" @click="goToTemplates">查看全部模板</el-button>
           </div>
         </div>
       </section>
@@ -172,7 +200,7 @@
             <p class="text-gray-400 text-sm">专业的简历生成器，助您职业发展</p>
           </div>
           <div class="text-center md:text-right">
-            <p class="text-gray-500 text-sm">&copy; 2024 ResumeBuilder Pro. All rights reserved.</p>
+            <p class="text-gray-500 text-sm">&copy; 2025 ResumeBuilder Pro. All rights reserved.</p>
           </div>
         </div>
       </div>
@@ -193,7 +221,11 @@
     Setting,
     View,
     Tools,
-    Timer
+    Timer,
+    Briefcase,
+    Monitor,
+    School,
+    Connection
   } from '@element-plus/icons-vue'
 
   const router = useRouter()
@@ -247,7 +279,11 @@
 
   // 方法
   const goToTemplates = () => {
-    router.push('/templates')
+    // 滚动到模板选择区域
+    const templateSection = document.querySelector('.template-section')
+    if (templateSection) {
+      templateSection.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
   const scrollToFeatures = () => {
@@ -259,5 +295,36 @@
   const selectTemplate = templateId => {
     resumeStore.selectTemplate(templateId)
     router.push(`/editor/${templateId}`)
+  }
+
+  const getCategoryType = category => {
+    const typeMap = {
+      business: 'primary',
+      creative: 'success',
+      technical: 'info',
+      education: 'warning',
+      international: 'danger'
+    }
+    return typeMap[category] || ''
+  }
+
+  const getCategoryName = category => {
+    const nameMap = {
+      business: '商务',
+      creative: '创意',
+      technical: '技术',
+      education: '教育',
+      international: '国际'
+    }
+    return nameMap[category] || '其他'
+  }
+
+  const handleImageError = (event) => {
+    // 图片加载失败时显示默认图标
+    const img = event.target
+    const fallbackDiv = document.createElement('div')
+    fallbackDiv.className = 'w-full h-full bg-gray-100 flex items-center justify-center text-5xl text-gray-400'
+    fallbackDiv.innerHTML = '<i class="el-icon-document"></i>'
+    img.parentNode.replaceChild(fallbackDiv, img)
   }
 </script>

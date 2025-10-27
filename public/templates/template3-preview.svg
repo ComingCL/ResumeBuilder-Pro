@@ -1,0 +1,60 @@
+<svg width="300" height="400" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="300" height="400" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  
+  <!-- 左侧彩色条 -->
+  <rect x="0" y="0" width="8" height="400" fill="#10b981"/>
+  
+  <!-- 姓名 -->
+  <rect x="30" y="30" width="120" height="16" fill="#1f2937" rx="2"/>
+  
+  <!-- 职位 -->
+  <rect x="30" y="55" width="80" height="10" fill="#6b7280" rx="2"/>
+  
+  <!-- 分割线 -->
+  <rect x="30" y="80" width="240" height="1" fill="#e5e7eb"/>
+  
+  <!-- 联系信息 -->
+  <circle cx="40" cy="105" r="3" fill="#10b981"/>
+  <rect x="50" y="102" width="80" height="6" fill="#374151" rx="1"/>
+  
+  <circle cx="40" cy="125" r="3" fill="#10b981"/>
+  <rect x="50" y="122" width="100" height="6" fill="#374151" rx="1"/>
+  
+  <circle cx="40" cy="145" r="3" fill="#10b981"/>
+  <rect x="50" y="142" width="90" height="6" fill="#374151" rx="1"/>
+  
+  <!-- 个人简介 -->
+  <rect x="30" y="175" width="70" height="10" fill="#1f2937" rx="2"/>
+  <rect x="30" y="195" width="240" height="4" fill="#9ca3af" rx="1"/>
+  <rect x="30" y="205" width="220" height="4" fill="#9ca3af" rx="1"/>
+  <rect x="30" y="215" width="180" height="4" fill="#9ca3af" rx="1"/>
+  
+  <!-- 工作经验 -->
+  <rect x="30" y="245" width="70" height="10" fill="#1f2937" rx="2"/>
+  
+  <!-- 时间线样式 -->
+  <rect x="35" y="270" width="2" height="60" fill="#10b981"/>
+  <circle cx="36" cy="275" r="4" fill="#10b981"/>
+  <circle cx="36" cy="310" r="4" fill="#10b981"/>
+  
+  <rect x="50" y="270" width="90" height="8" fill="#374151" rx="1"/>
+  <rect x="50" y="282" width="70" height="6" fill="#6b7280" rx="1"/>
+  <rect x="50" y="292" width="150" height="4" fill="#9ca3af" rx="1"/>
+  
+  <rect x="50" y="305" width="85" height="8" fill="#374151" rx="1"/>
+  <rect x="50" y="317" width="65" height="6" fill="#6b7280" rx="1"/>
+  <rect x="50" y="327" width="140" height="4" fill="#9ca3af" rx="1"/>
+  
+  <!-- 技能标签 -->
+  <rect x="30" y="355" width="40" height="10" fill="#1f2937" rx="2"/>
+  
+  <rect x="30" y="375" width="45" height="20" fill="#dbeafe" stroke="#3b82f6" stroke-width="1" rx="10"/>
+  <rect x="35" y="380" width="35" height="4" fill="#3b82f6" rx="1"/>
+  
+  <rect x="85" y="375" width="50" height="20" fill="#d1fae5" stroke="#10b981" stroke-width="1" rx="10"/>
+  <rect x="90" y="380" width="40" height="4" fill="#10b981" rx="1"/>
+  
+  <rect x="145" y="375" width="40" height="20" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" rx="10"/>
+  <rect x="150" y="380" width="30" height="4" fill="#f59e0b" rx="1"/>
+</svg>

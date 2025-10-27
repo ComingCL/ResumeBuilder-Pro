@@ -34,36 +34,41 @@ export const useResumeStore = defineStore('resume', {
         id: 'template1',
         name: '经典商务',
         description: '适合商务和管理岗位的经典模板',
-        preview: '/templates/template1-preview.jpg',
-        category: 'business'
+        preview: '/templates/template1-preview.svg',
+        category: 'business',
+        imageLoaded: false
       },
       {
         id: 'template2',
         name: '现代简约',
         description: '简约现代风格，适合设计和创意岗位',
-        preview: '/templates/template2-preview.jpg',
-        category: 'creative'
+        preview: '/templates/template2-preview.svg',
+        category: 'creative',
+        imageLoaded: false
       },
       {
         id: 'template3',
         name: '技术专业',
         description: '专为技术岗位设计的专业模板',
-        preview: '/templates/template3-preview.jpg',
-        category: 'technical'
+        preview: '/templates/template3-preview.svg',
+        category: 'technical',
+        imageLoaded: false
       },
       {
         id: 'template4',
         name: '清新文艺',
         description: '清新文艺风格，适合教育和文化岗位',
-        preview: '/templates/template4-preview.jpg',
-        category: 'education'
+        preview: '/templates/template4-preview.svg',
+        category: 'education',
+        imageLoaded: false
       },
       {
         id: 'template5',
         name: '国际通用',
         description: '符合国际标准的通用简历模板',
-        preview: '/templates/template5-preview.jpg',
-        category: 'international'
+        preview: '/templates/template5-preview.svg',
+        category: 'international',
+        imageLoaded: false
       }
     ]
   }),

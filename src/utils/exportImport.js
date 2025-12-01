@@ -1,6 +1,27 @@
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 
+const DEFAULT_BREAK_SELECTORS = [
+  '.resume-section',
+  '.experience-item',
+  '.education-item',
+  '.project-item',
+  '.exp-header',
+  '.edu-header',
+  '.project-header',
+  '.summary-text',
+  '.skills-grid',
+  '.resume-header',
+  '.markdown-content',
+  'h3',
+  'h4',
+  "[class*='border-b']",
+  "div[class*='space-y-'] > div",
+  "div[class*='pb-']"
+]
+
+const DEFAULT_BREAK_ATTRIBUTES = ['data-break-after', 'data-break-before', 'data-break-safe']
+
 /**
  * PDF导出和数据导入导出工具类
  * 作者：clarenceLiu
@@ -140,7 +161,6 @@ export class ResumeExportImport {
         ...options
       }
 
-      // 生成canvas
       const canvas = await html2canvas(clonedElement, defaultOptions)
       
       // 清理克隆的元素
@@ -148,20 +168,36 @@ export class ResumeExportImport {
 
       // 计算PDF尺寸 (A4: 210mm x 297mm)
       const imgWidth = 210
-      const pageHeight = 297 // A4页面高度
+      const pageHeight = 297
       const imgHeight = (canvas.height * imgWidth) / canvas.width
+      const mmPerPx = imgWidth / canvas.width
+      const pageHeightPx = Math.round(pageHeight * (canvas.width / imgWidth))
 
       // 创建PDF
       const pdf = new jsPDF('p', 'mm', 'a4')
       const imgData = canvas.toDataURL('image/png')
+      const scaleFactor = canvas.width / clonedElement.offsetWidth
 
-      // 智能分页处理
+      const breakSelectors = options.breakSelectors || DEFAULT_BREAK_SELECTORS
+      const breakAttributes = options.breakAttributes || DEFAULT_BREAK_ATTRIBUTES
+      const breakMarginPx = options.breakMarginPx || 4
+
       if (imgHeight <= pageHeight) {
-        // 内容适合单页
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight)
       } else {
-        // 需要多页处理
-        await this.addPagesWithSmartBreaks(pdf, imgData, imgWidth, imgHeight, pageHeight, clonedElement)
+        await this.addPagesWithSmartBreaks(
+          pdf,
+          canvas,
+          imgWidth,
+          pageHeight,
+          pageHeightPx,
+          clonedElement,
+          mmPerPx,
+          scaleFactor,
+          breakSelectors,
+          breakAttributes,
+          breakMarginPx
+        )
       }
 
       // 下载PDF
@@ -243,26 +279,79 @@ export class ResumeExportImport {
   /**
    * 智能分页添加
    */
-  static async addPagesWithSmartBreaks(pdf, imgData, imgWidth, imgHeight, pageHeight, element) {
-    let currentY = 0
-    let pageCount = 0
-    
-    // 计算需要的页数
-    const totalPages = Math.ceil(imgHeight / pageHeight)
-    
-    for (let i = 0; i < totalPages; i++) {
-      if (i > 0) {
-        pdf.addPage()
+  static async addPagesWithSmartBreaks(pdf, canvas, imgWidth, pageHeightMm, pageHeightPx, element, mmPerPx, scaleFactor, selectors, attributes, marginPx) {
+    const safeBreaks = this.getSafeBreakPoints(element, canvas.height, scaleFactor, selectors, attributes)
+    let start = 0
+    const slices = []
+    while (start < canvas.height) {
+      const candidates = safeBreaks.filter(b => b > start && (b - start) <= pageHeightPx - (marginPx || 0))
+      let end
+      if (candidates.length > 0) {
+        end = Math.max(...candidates)
+      } else {
+        end = Math.min(start + pageHeightPx, canvas.height)
       }
-      
-      // 计算当前页的Y位置
-      const yPosition = -(i * pageHeight)
-      
-      // 添加图片到当前页
-      pdf.addImage(imgData, 'PNG', 0, yPosition, imgWidth, imgHeight)
-      
-      currentY += pageHeight
+      slices.push({ top: start, height: end - start })
+      start = end
     }
+
+    for (let i = 0; i < slices.length; i++) {
+      const { top, height } = slices[i]
+      const sliceCanvas = document.createElement('canvas')
+      sliceCanvas.width = canvas.width
+      sliceCanvas.height = height
+      const ctx = sliceCanvas.getContext('2d')
+      ctx.drawImage(canvas, 0, top, canvas.width, height, 0, 0, canvas.width, height)
+      const sliceData = sliceCanvas.toDataURL('image/png')
+      const sliceHeightMm = height * mmPerPx
+      if (i > 0) pdf.addPage()
+      pdf.addImage(sliceData, 'PNG', 0, 0, imgWidth, sliceHeightMm)
+    }
+  }
+
+  static getSafeBreakPoints(element, canvasHeight, scale, selectors = DEFAULT_BREAK_SELECTORS, attributes = DEFAULT_BREAK_ATTRIBUTES) {
+    const containerRect = element.getBoundingClientRect()
+    const points = [0]
+    selectors.forEach(sel => {
+      const nodes = element.querySelectorAll(sel)
+      nodes.forEach(node => {
+        const rect = node.getBoundingClientRect()
+        const bottom = Math.round((rect.bottom - containerRect.top) * (scale || 1))
+        if (bottom > 0 && bottom < canvasHeight) points.push(bottom)
+      })
+    })
+
+    if (attributes && attributes.length) {
+      if (attributes.includes('data-break-after')) {
+        const nodes = element.querySelectorAll('[data-break-after]')
+        nodes.forEach(node => {
+          const rect = node.getBoundingClientRect()
+          const bottom = Math.round((rect.bottom - containerRect.top) * (scale || 1))
+          if (bottom > 0 && bottom < canvasHeight) points.push(bottom)
+        })
+      }
+      if (attributes.includes('data-break-before')) {
+        const nodes = element.querySelectorAll('[data-break-before]')
+        nodes.forEach(node => {
+          const rect = node.getBoundingClientRect()
+          const top = Math.round((rect.top - containerRect.top) * (scale || 1))
+          if (top > 0 && top < canvasHeight) points.push(top)
+        })
+      }
+      if (attributes.includes('data-break-safe')) {
+        const nodes = element.querySelectorAll('[data-break-safe]')
+        nodes.forEach(node => {
+          const rect = node.getBoundingClientRect()
+          const top = Math.round((rect.top - containerRect.top) * (scale || 1))
+          const bottom = Math.round((rect.bottom - containerRect.top) * (scale || 1))
+          if (top > 0 && top < canvasHeight) points.push(top)
+          if (bottom > 0 && bottom < canvasHeight) points.push(bottom)
+        })
+      }
+    }
+    points.push(canvasHeight)
+    const sorted = Array.from(new Set(points)).sort((a, b) => a - b)
+    return sorted
   }
 
   /**

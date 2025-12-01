@@ -428,19 +428,19 @@
                 </div>
 
                 <!-- 教育经历 -->
-                <div v-if="resumeData.education.length > 0" class="mb-6">
+                <div v-if="resumeData.education.length > 0" class="mb-6 resume-section">
                   <h3
                     class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
                     教育经历
                   </h3>
-                  <div class="space-y-4">
+                  <div class="space-y-4 education-list">
                     <div
                       v-for="edu in resumeData.education"
                       :key="edu.id"
-                      class="pb-4 border-b border-gray-200 last:border-b-0"
+                      class="pb-4 border-b border-gray-200 last:border-b-0 education-item"
                     >
-                      <div class="flex justify-between items-start mb-2">
+                      <div class="flex justify-between items-start mb-2 edu-header">
                         <div class="flex-1">
                           <h4 class="font-bold text-gray-900 text-base mb-1">
                             {{ edu.school || '学校名称' }}
@@ -461,19 +461,19 @@
                 </div>
 
                 <!-- 工作经验 -->
-                <div v-if="resumeData.workExperience.length > 0" class="mb-6">
+                <div v-if="resumeData.workExperience.length > 0" class="mb-6 resume-section">
                   <h3
                     class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
                     工作经验
                   </h3>
-                  <div class="space-y-6">
+                  <div class="space-y-6 experience-list">
                     <div
                       v-for="exp in resumeData.workExperience"
                       :key="exp.id"
-                      class="pb-4 border-b border-gray-200 last:border-b-0"
+                      class="pb-4 border-b border-gray-200 last:border-b-0 experience-item"
                     >
-                      <div class="flex justify-between items-start mb-3">
+                      <div class="flex justify-between items-start mb-3 exp-header">
                         <div class="flex-1">
                           <h4 class="font-bold text-gray-900 text-base mb-1">
                             {{ exp.position || '职位名称' }}
@@ -494,19 +494,19 @@
                 </div>
 
                 <!-- 项目经历 -->
-                <div v-if="resumeData.projects.length > 0" class="mb-6">
+                <div v-if="resumeData.projects.length > 0" class="mb-6 resume-section">
                   <h3
                     class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
                     项目经历
                   </h3>
-                  <div class="space-y-6">
+                  <div class="space-y-6 projects-list">
                     <div
                       v-for="project in resumeData.projects"
                       :key="project.id"
-                      class="pb-4 border-b border-gray-200 last:border-b-0"
+                      class="pb-4 border-b border-gray-200 last:border-b-0 project-item"
                     >
-                      <div class="flex justify-between items-start mb-3">
+                      <div class="flex justify-between items-start mb-3 project-header">
                         <div class="flex-1">
                           <h4 class="font-bold text-gray-900 text-base mb-1">
                             {{ project.name || '项目名称' }}
@@ -532,7 +532,7 @@
                 </div>
 
                 <!-- 技能专长 -->
-                <div v-if="resumeData.skills.length > 0" class="mb-6">
+                <div v-if="resumeData.skills.length > 0" class="mb-6 resume-section">
                   <h3
                     class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
@@ -555,19 +555,19 @@
                 </div>
 
                 <!-- 项目经历 -->
-                <div v-if="resumeData.projects.length > 0" class="mb-6">
+                <div v-if="resumeData.projects.length > 0" class="mb-6 resume-section">
                   <h3
                     class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
                   >
                     项目经历
                   </h3>
-                  <div class="space-y-6">
+                  <div class="space-y-6 projects-list">
                     <div
                       v-for="project in resumeData.projects"
                       :key="project.id"
-                      class="pb-4 border-b border-gray-200 last:border-b-0"
+                      class="pb-4 border-b border-gray-200 last:border-b-0 project-item"
                     >
-                      <div class="flex justify-between items-start mb-3">
+                      <div class="flex justify-between items-start mb-3 project-header">
                         <div class="flex-1">
                           <h4 class="font-bold text-gray-900 text-base mb-1">
                             {{ project.name || '项目名称' }}

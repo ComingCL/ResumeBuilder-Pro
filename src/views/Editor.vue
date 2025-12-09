@@ -344,18 +344,60 @@
                     size="small"
                     class="mb-3"
                   />
-                  <el-input
-                    type="textarea"
-                    v-model="project.description"
-                    placeholder="项目描述和主要成就"
-                    :rows="3"
-                    size="small"
-                  />
+                  <div class="mb-3">
+                    <label class="block text-xs text-gray-600 mb-2">项目描述（支持Markdown格式）</label>
+                    <v-md-editor
+                      v-model="project.description"
+                      height="150px"
+                      :toolbar-config="{
+                        exclude: ['image', 'link']
+                      }"
+                      placeholder="项目描述和主要成就，支持Markdown格式：
+- **背景**：项目背景和需求
+- **方案**：技术方案和架构设计
+- **成果**：项目成果和业绩数据"
+                      @change="(content) => updateProjectDescription(project.id, content)"
+                    />
+                  </div>
                 </div>
               </div>
               <div v-else class="text-center py-8 text-gray-500">
                 <el-icon class="text-2xl mb-2"><FolderOpened /></el-icon>
                 <p>暂无项目经历，点击添加按钮开始</p>
+              </div>
+            </div>
+
+            <!-- 其他信息部分 -->
+            <div class="mb-8">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-3 border-b-2 border-indigo-500">
+                <el-icon class="mr-2"><Document /></el-icon>
+                其他信息
+              </h3>
+              <div class="space-y-4">
+                <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                  <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      其他信息（支持Markdown格式）
+                    </label>
+                    <p class="text-xs text-gray-500 mb-3">
+                      可以添加获奖情况、证书、语言能力、兴趣爱好等其他相关信息。支持Markdown语法，如 **粗体**、*斜体*、- 列表等。
+                    </p>
+                  </div>
+                  <v-md-editor
+                    v-model="resumeData.othersMarkdown"
+                    mode="edit"
+                    height="200px"
+                    :toolbar-config="{
+                      exclude: ['image', 'link']
+                    }"
+                    placeholder="请输入其他相关信息，如：
+- 获奖情况：2022年全国大学生数学建模竞赛一等奖
+- 语言能力：英语CET-6，日语N2
+- 技能证书：软件设计师中级证书
+- 兴趣爱好：摄影、阅读、开源项目贡献"
+                    @change="updateOthersMarkdown"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -585,10 +627,22 @@
                       <div v-if="project.technologies" class="text-sm text-gray-600 mb-2">
                         <strong>技术栈：</strong>{{ project.technologies }}
                       </div>
-                      <div v-if="project.description" class="text-gray-700 text-sm leading-relaxed">
-                        {{ project.description }}
+                      <div v-if="project.description" class="text-gray-700 text-sm leading-relaxed markdown-content">
+                        <v-md-preview :text="project.description" />
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <!-- 其他信息 -->
+                <div v-if="resumeData.othersMarkdown" class="mb-6 resume-section">
+                  <h3
+                    class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-black"
+                  >
+                    其他信息
+                  </h3>
+                  <div class="text-gray-700 text-sm leading-relaxed markdown-content">
+                    <v-md-preview :text="resumeData.othersMarkdown" />
                   </div>
                 </div>
               </div>
@@ -729,6 +783,15 @@
 
   const removeProject = id => {
     resumeStore.removeProject(id)
+  }
+
+  const updateProjectDescription = (id, content) => {
+    resumeStore.updateProject(id, { description: content })
+  }
+
+  // 其他信息管理
+  const updateOthersMarkdown = (content) => {
+    resumeStore.updateOthersMarkdown(content)
   }
 
   // 导出功能

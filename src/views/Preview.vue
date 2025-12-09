@@ -131,8 +131,21 @@
                 </div>
                 <p class="project-role" v-if="project.role">角色：{{ project.role }}</p>
                 <p class="project-tech" v-if="project.technologies">技术栈：{{ project.technologies }}</p>
-                <p class="project-desc" v-if="project.description">{{ project.description }}</p>
+                <div class="project-desc markdown-content" v-if="project.description">
+                  <v-md-preview :text="project.description" />
+                </div>
               </div>
+            </div>
+          </div>
+
+          <!-- 其他信息 -->
+          <div class="resume-section" v-if="resumeData.othersMarkdown">
+            <h2 class="section-title">
+              <span class="title-text">其他信息</span>
+              <div class="title-line others-line"></div>
+            </h2>
+            <div class="others-content markdown-content">
+              <v-md-preview :text="resumeData.othersMarkdown" />
             </div>
           </div>
         </div>
@@ -142,11 +155,13 @@
 </template>
 
 <script setup>
-  import { ref, computed, onMounted } from 'vue'
+  import { ref, computed, onMounted, nextTick } from 'vue'
   import { useRouter } from 'vue-router'
   import { useResumeStore } from '@/stores/resume'
   import { ElMessage } from 'element-plus'
   import { ArrowLeft, Download, Printer } from '@element-plus/icons-vue'
+  import html2canvas from 'html2canvas'
+  import jsPDF from 'jspdf'
 
   const router = useRouter()
   const resumeStore = useResumeStore()
@@ -188,9 +203,133 @@
 
   const exportToPDF = async () => {
     try {
-      ElMessage.info('PDF导出功能开发中...')
-      // TODO: 实现PDF导出功能
+      ElMessage.info('正在生成PDF，请稍候...')
+      
+      await nextTick()
+      
+      const element = resumeRef.value
+      if (!element) {
+        ElMessage.error('找不到简历内容')
+        return
+      }
+
+      // 创建一个临时容器用于PDF生成，设置A4纸张尺寸
+      const tempContainer = document.createElement('div')
+      tempContainer.style.cssText = `
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+        width: 794px;
+        background: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        padding: 40px;
+        box-sizing: border-box;
+      `
+      
+      // 克隆简历内容
+      const clonedElement = element.cloneNode(true)
+      
+      // 优化克隆元素的样式，防止分页截断
+      const sections = clonedElement.querySelectorAll('.resume-section')
+      sections.forEach(section => {
+        section.style.pageBreakInside = 'avoid'
+        section.style.breakInside = 'avoid'
+        section.style.marginBottom = '24px'
+      })
+      
+      // 优化项目和工作经验项目，防止被截断
+      const items = clonedElement.querySelectorAll('.project-item, .experience-item, .education-item')
+      items.forEach(item => {
+        item.style.pageBreakInside = 'avoid'
+        item.style.breakInside = 'avoid'
+        item.style.marginBottom = '16px'
+      })
+      
+      // 设置克隆元素样式
+      clonedElement.style.cssText = `
+        width: 714px;
+        background: white;
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+      `
+      
+      tempContainer.appendChild(clonedElement)
+      document.body.appendChild(tempContainer)
+      
+      // 使用html2canvas生成图片
+      const canvas = await html2canvas(tempContainer, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        height: tempContainer.scrollHeight + 80,
+        scrollX: 0,
+        scrollY: 0
+      })
+      
+      // 清理临时容器
+      document.body.removeChild(tempContainer)
+      
+      // 创建PDF
+      const pdf = new jsPDF('p', 'pt', 'a4')
+      const imgData = canvas.toDataURL('image/png')
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      
+      // 计算缩放比例
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight)
+      const scaledWidth = imgWidth * ratio
+      const scaledHeight = imgHeight * ratio
+      
+      // 如果内容高度超过一页，需要分页
+      if (scaledHeight > pdfHeight) {
+        let position = 0
+        let pageHeight = pdfHeight
+        
+        while (position < scaledHeight) {
+          // 添加页面
+          if (position > 0) {
+            pdf.addPage()
+          }
+          
+          // 计算当前页面需要显示的内容
+          const remainingHeight = scaledHeight - position
+          const currentPageHeight = Math.min(pageHeight, remainingHeight)
+          
+          pdf.addImage(
+            imgData,
+            'PNG',
+            0,
+            -position,
+            scaledWidth,
+            scaledHeight
+          )
+          
+          position += pageHeight
+        }
+      } else {
+        // 内容适合一页
+        pdf.addImage(imgData, 'PNG', 0, 0, scaledWidth, scaledHeight)
+      }
+      
+      // 生成文件名
+      const fileName = `${resumeData.value.personalInfo.name || '简历'}_${new Date().toISOString().slice(0, 10)}.pdf`
+      
+      // 保存PDF
+      pdf.save(fileName)
+      
+      ElMessage.success('PDF导出成功！')
+      
     } catch (error) {
+      console.error('PDF导出失败:', error)
       ElMessage.error('导出失败，请重试')
     }
   }
@@ -345,6 +484,10 @@
     background: #ef4444;
   }
 
+  .others-line {
+    background: #06b6d4;
+  }
+
   .summary-text {
     color: #4b5563;
     margin: 0;
@@ -408,6 +551,12 @@
     margin: 0.25rem 0;
     color: #4b5563;
     font-size: 0.95rem;
+  }
+
+  .others-content {
+    color: #4b5563;
+    margin: 0;
+    text-align: justify;
   }
 
   .skills-grid {

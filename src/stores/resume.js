@@ -229,6 +229,12 @@ export const useResumeStore = defineStore('resume', {
       this.saveToLocalStorage()
     },
 
+    // 更新其他信息（Markdown）
+    updateOthersMarkdown(content) {
+      this.resumeData.othersMarkdown = content
+      this.saveToLocalStorage()
+    },
+
     // 选择模板
     selectTemplate(templateId) {
       this.selectedTemplateId = templateId
